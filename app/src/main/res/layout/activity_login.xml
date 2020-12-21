@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="10dp"
+    tools:context=".LoginActivity">
+
+
+    <ImageView
+        android:id="@+id/login_logo"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="50dp"
+        android:src="@drawable/logo"
+        android:contentDescription="@string/app_logo"
+        />
+
+    <EditText
+        android:id="@+id/login_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/username"
+        android:drawableLeft="@drawable/ic_baseline_account_circle_24"
+        android:layout_marginTop="50dp"
+        android:drawableStart="@drawable/ic_baseline_account_circle_24" />
+
+    <EditText
+        android:id="@+id/login_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:drawableLeft="@drawable/ic_baseline_lock_24"
+        android:inputType="textPassword"
+        android:drawableStart="@drawable/ic_baseline_lock_24" />
+
+    <Button
+        android:id="@+id/login_btn_signin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_in"
+        android:layout_marginTop="50dp" />
+
+    <Button
+        android:id="@+id/login_btn_go_to_registration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/don_t_have_an_account_register_here" />
+</LinearLayout>
