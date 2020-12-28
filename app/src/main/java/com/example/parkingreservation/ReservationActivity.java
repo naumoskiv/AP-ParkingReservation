@@ -1,5 +1,6 @@
 package com.example.parkingreservation;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
@@ -8,6 +9,9 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,6 +30,28 @@ public class ReservationActivity extends AppCompatActivity implements AdapterVie
     Button proceed;
     int mDay, mMonth, mYear;
     String mHours;
+    String username;
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.reservations_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.item1) {
+            Intent intent = new Intent(this, MyReservationsActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -46,6 +72,7 @@ public class ReservationActivity extends AppCompatActivity implements AdapterVie
 
         Intent intent = getIntent();
         final City city  = intent.getParcelableExtra("city");
+        username = intent.getStringExtra("username");
 
         int image_resource = city.getImage();
         String name_resource = city.getName();
@@ -77,6 +104,7 @@ public class ReservationActivity extends AppCompatActivity implements AdapterVie
                 intent.putExtra("year", mYear);
                 intent.putExtra("hours", mHours);
                 intent.putExtra("city", city);
+                intent.putExtra("username", username);
                 startActivity(intent);
             }
         });

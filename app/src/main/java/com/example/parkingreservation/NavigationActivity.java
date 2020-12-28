@@ -26,7 +26,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
     private LatLng myLocation;
     private String lat;
     private String lng;
-    private String cityName;
+    //private String cityName;
     private String parkingName;
     private static final int req_code = 1;
 
@@ -41,10 +41,9 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
 
         Intent incoming = getIntent();
         Parking parking = incoming.getParcelableExtra("parking");
-        lat = parking.getLat();
-        lng = parking.getLng();
-        cityName = parking.getCityName();
-        parkingName = parking.getParkingName();
+        parkingName = incoming.getStringExtra("parking");
+        lat = incoming.getStringExtra("lat");
+        lng = incoming.getStringExtra("lng");
     }
 
     /**
@@ -63,7 +62,7 @@ public class NavigationActivity extends FragmentActivity implements OnMapReadyCa
         // Add a marker in Sydney and move the camera
         LatLng location = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
         LatLngBounds bounds = new LatLngBounds(new LatLng(Double.parseDouble(lat) - 0.01, Double.parseDouble(lng) - 0.01), new LatLng(Double.parseDouble(lat) + 0.01, Double.parseDouble(lng) + 0.01));
-        mMap.addMarker(new MarkerOptions().position(location).title(parkingName + ", " + cityName));
+        mMap.addMarker(new MarkerOptions().position(location).title(parkingName));
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
 
         myLocation = getMyLocation();

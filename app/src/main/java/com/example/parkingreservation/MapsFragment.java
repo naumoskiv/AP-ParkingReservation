@@ -21,6 +21,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsFragment extends Fragment {
 
+    String[] lat;
+    String[] lng;
+    String parking_name;
+    DbHelper db;
+
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         /**
@@ -35,16 +40,16 @@ public class MapsFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
 
-            Intent intent = getActivity().getIntent();
-            Parking parking = intent.getParcelableExtra("parking");
-            String lat = parking.getLat();
-            String lng = parking.getLng();
-            String cityName = parking.getCityName();
-            String parkingName = parking.getParkingName();
+            Intent incoming = getActivity().getIntent();
+            parking_name = incoming.getStringExtra("parking");
+            db = new DbHelper(getActivity());
 
-            LatLng location = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
-            LatLngBounds bounds = new LatLngBounds(new LatLng(Double.parseDouble(lat) - 0.05, Double.parseDouble(lng) - 0.05), new LatLng(Double.parseDouble(lat) + 0.05, Double.parseDouble(lng) + 0.05));
-            googleMap.addMarker(new MarkerOptions().position(location).title(parkingName + ", " + cityName));
+            lat = db.getLatitude(parking_name);
+            lng = db.getLongitude(parking_name);
+
+            LatLng location = new LatLng(Double.parseDouble(lat[0]), Double.parseDouble(lng[0]));
+            LatLngBounds bounds = new LatLngBounds(new LatLng(Double.parseDouble(lat[0]) - 0.05, Double.parseDouble(lng[0]) - 0.05), new LatLng(Double.parseDouble(lat[0]) + 0.05, Double.parseDouble(lng[0]) + 0.05));
+            googleMap.addMarker(new MarkerOptions().position(location).title(parking_name));
             googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
         }
     };

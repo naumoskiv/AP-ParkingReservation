@@ -20,6 +20,7 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.ViewHolder> {
     private ArrayList<City> myList;
     private int rowLayout;
     private Context mContext;
+    private String username;
 
     // Референца на views за секој податок
     // Комплексни податоци може да бараат повеќе views per item
@@ -38,9 +39,10 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.ViewHolder> {
     }
 
     // конструктор
-    public myAdapter(ArrayList<City> cityList, int rowLayout, Context context) {
+    public myAdapter(ArrayList<City> cityList, int rowLayout, String username, Context context) {
         this.myList = cityList;
         this.rowLayout = rowLayout;
+        this.username = username;
         this.mContext = context;
     }
 
@@ -64,7 +66,6 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.ViewHolder> {
                 mContext.startActivity(intent);
             }
         });*/
-
         City entry = myList.get(i);
         viewHolder.Pic.setImageResource(entry.getImage());
         viewHolder.myName.setText(entry.getName());
@@ -73,6 +74,7 @@ public class myAdapter extends RecyclerView.Adapter<myAdapter.ViewHolder> {
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ReservationActivity.class);
                 intent.putExtra("city", myList.get(i));
+                intent.putExtra("username", username);
                 mContext.startActivity(intent);
             }
         });

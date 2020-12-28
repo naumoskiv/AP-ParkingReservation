@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,8 +20,16 @@ import java.util.ArrayList;
 public class ParkingsAdapter extends RecyclerView.Adapter<ParkingsAdapter.ViewHolder>{
 
     private ArrayList<Parking> myList;
+    DbHelper db;
     private int rowLayout;
     private Context mContext;
+    private String mDate;
+    private String mTime;
+    private String mUsername;
+    //private String cityName;
+    private String[] parkingNames;
+    private int[] capacity;
+    private int[] reservations;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -38,9 +47,14 @@ public class ParkingsAdapter extends RecyclerView.Adapter<ParkingsAdapter.ViewHo
         }
     }
 
-    public ParkingsAdapter(ArrayList<Parking> parkingsList, int rowLayout, Context context) {
-        this.myList = parkingsList;
+    public ParkingsAdapter(String[] parkingNames, int[] capacity, int[] reservations, int rowLayout, String date, String time, String username, Context context) {
+        this.parkingNames = parkingNames;
+        this.capacity = capacity;
+        this.reservations = reservations;
         this.rowLayout = rowLayout;
+        this.mDate = date;
+        this.mTime = time;
+        this.mUsername = username;
         this.mContext = context;
     }
 
@@ -53,11 +67,14 @@ public class ParkingsAdapter extends RecyclerView.Adapter<ParkingsAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        Parking entry = myList.get(position);
-        holder.mName.setText(entry.getParkingName());
-        String taken = String.valueOf(entry.getTakenPlaces());
+        db = new DbHelper(mContext);
+        final String parking_name = parkingNames[position];
+        int takenspots = db.getNumReservations(parking_name, mDate, mTime);
+        int available = capacity[position] - takenspots;
+        holder.mName.setText(parking_name);
+        String taken = String.valueOf(takenspots);
         taken = taken + " taken places";
-        String free = String.valueOf(entry.getFreePlaces());
+        String free = String.valueOf(available);
         free = free + " free places";
         holder.takenPlaces.setText(taken);
         holder.freePlaces.setText(free);
@@ -66,16 +83,29 @@ public class ParkingsAdapter extends RecyclerView.Adapter<ParkingsAdapter.ViewHo
         holder.buttonReserve.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, ReservationConfirmation.class);
-                intent.putExtra("parking", myList.get(position));
-                mContext.startActivity(intent);
+                DbHelper db = new DbHelper(mContext);
+                int numberReservations = db.limitReservations(mUsername);
+                if (numberReservations > 2) {
+                    Toast.makeText(mContext, "Reservation limit exceeded", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    boolean flag = db.addReservation(mUsername, parking_name, mDate, mTime);
+                    if (flag) {
+                        Toast.makeText(mContext, "Reservation successful", Toast.LENGTH_SHORT).show();
+                    }
+
+                    Intent intent = new Intent(mContext, ReservationConfirmation.class);
+                    intent.putExtra("parking", parking_name);
+                    intent.putExtra("username", mUsername);
+                    mContext.startActivity(intent);
+                }
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return myList == null ? 0 : myList.size();
+        return parkingNames.length;
     }
 
 }

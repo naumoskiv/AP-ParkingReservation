@@ -8,19 +8,16 @@ import java.util.ArrayList;
 public class City implements Parcelable {
     private String mName;
     private int mImage;
-    private ArrayList<Parking> mParkings;
 
-    public City(String name, int image, ArrayList<Parking> parkings) {
+    public City(String name, int image) {
         mName = name;
         mImage = image;
-        mParkings = parkings;
     }
 
 
     protected City(Parcel in) {
         mName = in.readString();
         mImage = in.readInt();
-        mParkings = in.createTypedArrayList(Parking.CREATOR);
     }
 
     public static final Creator<City> CREATOR = new Creator<City>() {
@@ -43,7 +40,6 @@ public class City implements Parcelable {
         return mImage;
     }
 
-    public ArrayList<Parking> getParkings() { return mParkings; }
 
     @Override
     public int describeContents() {
@@ -54,7 +50,6 @@ public class City implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mName);
         dest.writeInt(mImage);
-        dest.writeTypedList(mParkings);
     }
 }
 

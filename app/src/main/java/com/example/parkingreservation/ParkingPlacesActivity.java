@@ -1,5 +1,6 @@
 package com.example.parkingreservation;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,11 +23,35 @@ public class ParkingPlacesActivity extends AppCompatActivity {
 
     RecyclerView mRecyclerView;
     ParkingsAdapter mAdapter;
+    DbHelper db;
 
+    String[] parkingNames;
+    int[] capacity;
+    int [] reservations;
+    String city_name;
+    String username;
 
     TextView dateText;
     TextView numberHours;
     TextView cityName;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.reservations_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.item1) {
+            Intent intent = new Intent(this, MyReservationsActivity.class);
+            intent.putExtra("username", username);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,19 +61,27 @@ public class ParkingPlacesActivity extends AppCompatActivity {
         dateText = (TextView) findViewById(R.id.chosen_date_parking);
         numberHours = (TextView) findViewById(R.id.number_of_hours);
         cityName = (TextView) findViewById(R.id.city_name_parking_activity);
+        db = new DbHelper(this);
+
 
         Intent incoming = getIntent();
+        username = incoming.getStringExtra("username");
+
         final City city = incoming.getParcelableExtra("city");
+        assert city != null;
+        city_name = city.getName();
+
+        parkingNames = db.getParkingNamesInCity(city_name);
+        capacity = db.getCapacity(city_name);
+
         int day = incoming.getIntExtra("day", 0);
         int month = incoming.getIntExtra("month", 0);
         int year = incoming.getIntExtra("year", 0);
         String hours = incoming.getStringExtra("hours");
         String date = day + "/" + month + "/" + year;
 
-        assert city != null;
-        String city_name = city.getName();
+        reservations = db.getReservations(date, hours, parkingNames);
 
-        hours = hours + " hours";
         date = "Reservation for " + date;
 
         dateText.setText(date);
@@ -66,7 +102,7 @@ public class ParkingPlacesActivity extends AppCompatActivity {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         // сетирање на кориснички дефиниран адаптер myAdapter (посебна класа)
-        mAdapter = new ParkingsAdapter(city.getParkings(), R.layout.parking_row, this);
+        mAdapter = new ParkingsAdapter(parkingNames, capacity, reservations, R.layout.parking_row, date, hours, username, this);
 
         //прикачување на адаптерот на RecyclerView
         mRecyclerView.setAdapter(mAdapter);
